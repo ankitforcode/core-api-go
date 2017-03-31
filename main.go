@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/go-sql-driver/mysql"
 	"./config"
+//	"./config/routes"
         log "github.com/inconshreveable/log15"
 )
 	
@@ -35,7 +36,7 @@ func GetPeopleEndpoint(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(people)
         end := time.Now()
         latency := end.Sub(start)
-        log.Info("Endpoint Hit: getpeople.", "Latency:" , latency , "Path" , r.URL.Path , "Method" , r.Method )
+        log.Info("Endpoint Hit: getpeople.", "Latency" , latency , "Path" , r.URL.Path , "Method" , r.Method)
 }	
 
 func homePage(w http.ResponseWriter, r *http.Request){
@@ -43,7 +44,7 @@ func homePage(w http.ResponseWriter, r *http.Request){
 	fmt.Fprintf(w, "Welcome to the HomePage!")
 	end := time.Now()
 	latency := end.Sub(start)
- 	log.Info("Endpoint Hit: homepage.", "Latency:" , latency , "Path" , r.URL.Path , "Method" , r.Method )
+ 	log.Info("Endpoint Hit: homepage.", "Latency" , latency , "Path" , r.URL.Path , "Method" , r.Method )
 }
 
 func returnArticle(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +52,7 @@ func returnArticle(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "return a specific article")
 	end := time.Now()
 	latency := end.Sub(start)
-	log.Info("Endpoint Hit: returnArticle.", "Latency:" , latency , "Path" , r.URL.Path , "Method" , r.Method )
+	log.Info("Endpoint Hit: returnArticle.", "Latency" , latency , "Path" , r.URL.Path , "Method" , r.Method )
 }
 
 func handleRequest() {
@@ -64,6 +65,7 @@ func handleRequest() {
     	router.HandleFunc("/people", GetPeopleEndpoint).Methods("GET")
 	router.HandleFunc("/single", returnArticle).Methods("GET")
 	err := http.ListenAndServe(listenAddress, router)
+	// err := http.ListenAndServe(listenAddress, http.HandlerFunc(routes.RedirectToHTTPS))
 	if err != nil {
 		log.Error("ListenAndServe: ", "err", err)
 		os.Exit(1)
@@ -78,9 +80,9 @@ func main() {
 	defer db.Close()
 	if err = db.Ping(); err != nil {
 		log.Error("Error : ", "err", err.Error())
-		os.Exit(1)
+	} else {
+		log.Info("Successfully Connected to Database Server: ", "server", config.Config.DB.Host, "database", config.Config.DB.Name)
 	}
-	log.Info("Successfully Connected to Database Server: ", "server", config.Config.DB.Host, "database", config.Config.DB.Name)
 	runtime.GOMAXPROCS(nuCPU)
 	handleRequest()
 }
