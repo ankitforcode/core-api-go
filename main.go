@@ -59,7 +59,7 @@ func handleRequest() {
 	router := mux.NewRouter()
     	people = append(people, Person{ID: "1", Firstname: "Nic", Lastname: "Raboy", Address: &Address{City: "Dublin", State: "CA"}})
    	people = append(people, Person{ID: "2", Firstname: "Maria", Lastname: "Raboy"})
-	var listenAddress = fmt.Sprintf("0.0.0.0:%d", config.Config.Port)
+	var listenAddress = fmt.Sprintf("%s:%d", config.Config.Server.Host, config.Config.Server.Port)
 	log.Info("Starting Core API Server On :", "address", listenAddress)
 	router.HandleFunc("/", homePage).Methods("GET")
     	router.HandleFunc("/people", GetPeopleEndpoint).Methods("GET")
@@ -72,17 +72,21 @@ func handleRequest() {
 	}
 }
 
+func init() {
+        nuCPU := runtime.NumCPU()
+        runtime.GOMAXPROCS(nuCPU)
+        log.Info("Running with :", "CPU", nuCPU )
+	config.Load()
+        var connection = fmt.Sprintf("%s:%s@tcp(%s)/%s", config.Config.DB.User, config.Config.DB.Password, config.Config.DB.Host, config.Config.DB.Name)
+        db, err := sql.Open("mysql", connection)
+        defer db.Close()
+        if err = db.Ping(); err != nil {
+                log.Error("Error : ", "err", err.Error())
+        } else {
+                log.Info("Successfully Connected to Database Server: ", "server", config.Config.DB.Host, "database", config.Config.DB.Name)
+        }
+}
+
 func main() {
-	nuCPU := runtime.NumCPU()
-	log.Info("Running with :", "CPU", nuCPU )
-	var connection = fmt.Sprintf("%s:%s@tcp(%s)/%s", config.Config.DB.User, config.Config.DB.Password, config.Config.DB.Host, config.Config.DB.Name)
-	db, err := sql.Open("mysql", connection)
-	defer db.Close()
-	if err = db.Ping(); err != nil {
-		log.Error("Error : ", "err", err.Error())
-	} else {
-		log.Info("Successfully Connected to Database Server: ", "server", config.Config.DB.Host, "database", config.Config.DB.Name)
-	}
-	runtime.GOMAXPROCS(nuCPU)
 	handleRequest()
 }

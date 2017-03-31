@@ -1,7 +1,0 @@
-port: 8080
-db:
-  adapter: mysql
-  name: core
-  user: root
-  password: 
-  host: localhost:3306

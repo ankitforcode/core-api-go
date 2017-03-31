@@ -1,0 +1,13 @@
+{
+	"server": {
+		"host": "127.0.0.1",
+		"port": 8080
+	},
+	"db": {
+		"adapter": "mysql",
+		"name": "core",
+		"user": "root",
+		"password": null,
+		"host": "localhost:3306"
+	}
+}
