@@ -2,26 +2,31 @@ package server
 
 import (
 	"fmt"
-	log "github.com/inconshreveable/log15"
 	"net/http"
+
+	"../../config"
+	log "github.com/inconshreveable/log15"
 )
 
-type Server struct {
-	Host	 	string 	`json:"Host"`  // Server name
-	Port  		uint    `json:"Port"`  // HTTP port
+type servers struct {
+	Host string
+	Port uint
 }
 
-func Run(s Server) {
-	log.Info("Srarting Server On:" ,"address", s.Host, "port" , s.Port)
-	startHTTP(s)
+func Run(httpHandlers http.Handler) (s servers) {
+	s.Host = config.Config.Server.Host
+	s.Port = config.Config.Server.Port
+	log.Info("Starting Server On:", "address", s.Host, "port", s.Port)
+	startServer(s, httpHandlers)
+	return
 }
-	
-func startHTTP(s Server) {
-	if err := http.ListenAndServe(httpAddress(s), nil); err != nil {
+
+func startServer(s servers, handler http.Handler) {
+	if err := http.ListenAndServe(httpAddress(s), handler); err != nil {
 		log.Error("Error", "error", err)
 	}
 }
 
-func httpAddress(s Server) string {
+func httpAddress(s servers) string {
 	return s.Host + ":" + fmt.Sprintf("%d", s.Port)
 }
