@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"../../config"
+	"github.com/ankitforcode/core-api/config"
 	log "github.com/inconshreveable/log15"
 )
 
@@ -16,7 +16,7 @@ type servers struct {
 func Run(httpHandlers http.Handler) (s servers) {
 	s.Host = config.Config.Server.Host
 	s.Port = config.Config.Server.Port
-	log.Info("Starting Server On:", "address", s.Host, "port", s.Port)
+	log.Info("Starting Server On :", "address", s.Host, "port", s.Port)
 	startServer(s, httpHandlers)
 	return
 }
