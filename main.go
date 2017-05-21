@@ -4,9 +4,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/ankitforcode/core-api/config"
-	. "github.com/ankitforcode/core-api/lib/routes"
-	"github.com/ankitforcode/core-api/lib/server"
+	"github.com/ankitforcode/core-api-go/config"
+	. "github.com/ankitforcode/core-api-go/lib/routes"
+	"github.com/ankitforcode/core-api-go/lib/server"
 	"github.com/gorilla/mux"
 	log "github.com/inconshreveable/log15"
 	mgo "gopkg.in/mgo.v2"

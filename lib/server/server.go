@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ankitforcode/core-api/config"
+	"github.com/ankitforcode/core-api-go/config"
 	log "github.com/inconshreveable/log15"
 )
 
